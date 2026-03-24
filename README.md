@@ -27,7 +27,7 @@ An intelligent healthcare intermediary system that synthesizes natural language 
 │   ├── config.py
 │   ├── requirements.txt
 │   └── .env.example
-└── .kiro/specs/             # Specification documents
+└── specs/             # Specification documents
     └── healthcare-triage-system/
         ├── requirements.md
         ├── design.md
