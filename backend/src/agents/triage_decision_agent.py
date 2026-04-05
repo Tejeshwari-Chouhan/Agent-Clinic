@@ -54,6 +54,8 @@ Always provide:
         symptoms = input_data.get('symptoms', '')
         patient_age = input_data.get('patient_age')
         comorbidities = input_data.get('comorbidities', [])
+        known_conditions = input_data.get('known_conditions', [])
+        test_reports = input_data.get('test_reports', [])
         
         # Format disease probabilities for the agent
         prob_text = '\n'.join([f"- {cond}: {prob:.2%}" for cond, prob in disease_probs])
@@ -63,6 +65,8 @@ Always provide:
 Symptoms: {symptoms}
 Patient Age: {patient_age if patient_age else 'Not provided'}
 Comorbidities: {', '.join(comorbidities) if comorbidities else 'None'}
+Known Conditions (Historical): {', '.join(known_conditions) if known_conditions else 'None'}
+Test Reports (Historical): {', '.join([str(report) for report in test_reports]) if test_reports else 'None'}
 
 Disease Probability Analysis:
 {prob_text}
@@ -86,7 +90,7 @@ Please provide your triage decision in the following JSON format:
             json_str = response[json_start:json_end]
             decision = json.loads(json_str)
             return decision
-        except (json.JSONDecodeError, ValueError):
+        except ValueError:
             # Fallback if JSON parsing fails
             return {
                 'severity_level': 'Medium',
