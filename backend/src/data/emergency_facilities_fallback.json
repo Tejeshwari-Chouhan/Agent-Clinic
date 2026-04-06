@@ -1,0 +1,25 @@
+{
+  "facilities": [
+    {
+      "name": "City General Hospital - Emergency",
+      "address": "123 Main St, Downtown",
+      "phone": "+1-555-0101",
+      "distance_km": 2.5,
+      "estimated_time_minutes": 8
+    },
+    {
+      "name": "Riverside Medical Center - ER",
+      "address": "456 River Rd, Midtown",
+      "phone": "+1-555-0102",
+      "distance_km": 4.1,
+      "estimated_time_minutes": 12
+    },
+    {
+      "name": "Northside Trauma Hospital",
+      "address": "789 North Ave, Uptown",
+      "phone": "+1-555-0103",
+      "distance_km": 6.8,
+      "estimated_time_minutes": 18
+    }
+  ]
+}
