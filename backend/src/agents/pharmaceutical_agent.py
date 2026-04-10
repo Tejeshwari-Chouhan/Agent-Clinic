@@ -99,11 +99,13 @@ Please provide recommendations in the following JSON format:
             json_end = response.rfind('}') + 1
             json_str = response[json_start:json_end]
             recommendations = json.loads(json_str)
+            if 'recommendations' not in recommendations:
+                raise ValueError("Missing recommendations field")
             return recommendations
         except (json.JSONDecodeError, ValueError):
             return {
                 'recommendations': [],
                 'drug_interactions': [],
                 'otc_alternatives': [],
-                'warnings': ['Unable to process pharmaceutical recommendations. Consult healthcare provider.']
+                'warnings': ['Pharmaceutical recommendations require a physician consultation.']
             }

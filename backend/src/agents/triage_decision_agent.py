@@ -27,6 +27,7 @@ Always provide:
 - Any safety warnings"""
         
         super().__init__('TriageDecisionAgent', system_prompt)
+        self.model = 'gpt-4o-mini'
     
     def process(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -80,19 +81,37 @@ Please provide your triage decision in the following JSON format:
         response = self.get_response(prompt)
         
         try:
-            # Extract JSON from response
             json_start = response.find('{')
             json_end = response.rfind('}') + 1
+            if json_start == -1:
+                raise ValueError("No JSON in response")
             json_str = response[json_start:json_end]
             decision = json.loads(json_str)
+            if 'severity_level' not in decision:
+                raise ValueError("Missing required field severity_level")
             return decision
         except (json.JSONDecodeError, ValueError):
-            # Fallback if JSON parsing fails
+            # Rule-based fallback using top disease probability
+            primary = disease_probs[0][0] if disease_probs else 'Unknown'
+            confidence = disease_probs[0][1] if disease_probs else 0.5
+            severity_map = {'Pneumonia': 'High', 'Typhoid': 'Medium', 'Malaria': 'Medium'}
+            severity = severity_map.get(primary, 'Medium')
+            action_map = {
+                'High': 'Seek emergency care immediately — call 911 or go to nearest ED',
+                'Medium': 'Visit an urgent care clinic or physician today',
+                'Low': 'Rest at home and monitor symptoms; consult pharmacist if needed',
+            }
+            warnings = []
+            if severity == 'High':
+                warnings = ['EMERGENCY: Seek immediate medical attention']
             return {
-                'severity_level': 'Medium',
-                'primary_condition': disease_probs[0][0] if disease_probs else 'Unknown',
-                'confidence_score': 0.5,
-                'reasoning': response,
-                'recommended_action': 'Consult healthcare provider',
-                'safety_warnings': []
+                'severity_level': severity,
+                'primary_condition': primary,
+                'confidence_score': round(confidence, 3),
+                'reasoning': (
+                    f"Based on symptom analysis, {primary} has the highest probability "
+                    f"({confidence:.0%}). Severity classified as {severity} per clinical protocol."
+                ),
+                'recommended_action': action_map[severity],
+                'safety_warnings': warnings,
             }

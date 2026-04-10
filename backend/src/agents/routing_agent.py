@@ -87,14 +87,16 @@ Please provide routing recommendations in the following JSON format:
             json_end = response.rfind('}') + 1
             json_str = response[json_start:json_end]
             routing = json.loads(json_str)
+            if 'routing_pathway' not in routing:
+                raise ValueError("Missing required field routing_pathway")
             return routing
         except (json.JSONDecodeError, ValueError):
             return {
-                'routing_pathway': severity,
+                'routing_pathway': {'High': 'Emergency', 'Medium': 'Urgent Care', 'Low': 'Self-Care'}.get(severity, 'Urgent Care'),
                 'facility_type': self._get_facility_type(severity),
                 'pre_arrival_instructions': [],
-                'follow_up_guidance': ['Consult with healthcare provider'],
-                'emergency_contacts': ['911'],
+                'follow_up_guidance': ['Follow up with your healthcare provider within 48 hours'],
+                'emergency_contacts': ['911 (Emergency Services)'],
                 'estimated_wait_time': 'Unknown',
                 'special_considerations': []
             }
