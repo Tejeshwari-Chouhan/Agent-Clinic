@@ -4,8 +4,13 @@ from typing import List, Optional
 class SymptomInput(BaseModel):
     """Schema for symptom input"""
     symptoms: str
-    patient_id: Optional[str] = None
+    patient_age: Optional[int] = None
     current_medications: Optional[List[str]] = None
+    allergies: Optional[List[str]] = None
+    comorbidities: Optional[List[str]] = None
+    patient_location: Optional[str] = None
+    mobility_status: Optional[str] = "Mobile"
+
 
 class DiseaseProbability(BaseModel):
     """Schema for disease probability"""
@@ -29,6 +34,12 @@ class EmergencyRoutingInfo(BaseModel):
     distance_km: float
     estimated_time_minutes: int
     directions_url: str
+
+class EmergencyRoutingPayload(BaseModel):
+    """Structured emergency routing payload"""
+    routing_source: str  # live or fallback
+    emergency_instruction: str
+    facilities: List[EmergencyRoutingInfo]
 
 class PharmaceuticalRecommendation(BaseModel):
     """Schema for pharmaceutical recommendation"""

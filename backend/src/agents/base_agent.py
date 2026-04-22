@@ -11,8 +11,9 @@ class BaseAgent(ABC):
     def __init__(self, name: str, system_prompt: str):
         self.name = name
         self.system_prompt = system_prompt
-        self.client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-        self.model = 'gpt-4'
+        self.client = None
+        # Keep model configurable; default to a broadly available model.
+        self.model = os.getenv('OPENAI_MODEL', 'gpt-4o-mini')
         self.conversation_history = []
     
     def add_message(self, role: str, content: str):
@@ -24,6 +25,14 @@ class BaseAgent(ABC):
     
     def get_response(self, user_message: str) -> str:
         """Get response from LLM"""
+        if self.client is None:
+            api_key = os.getenv('OPENAI_API_KEY')
+            if not api_key:
+                raise ValueError(
+                    'OPENAI_API_KEY is not set. Please set it in backend/.env or the shell environment.'
+                )
+            self.client = OpenAI(api_key=api_key)
+
         self.add_message('user', user_message)
         
         messages = [

@@ -1,69 +1,46 @@
 """Routes for triage endpoints"""
 
 from fastapi import APIRouter, HTTPException
-from src.models.schemas import SymptomInput
+
 from src.agents.orchestrator_agent import OrchestratorAgent
-from src.services.symptom_processor import SymptomProcessor
-from src.services.ml_predictor import MLPredictor
+from src.models.schemas import SymptomInput
 
 router = APIRouter(prefix="/api/triage", tags=["triage"])
 
-# Initialize agents and services
 orchestrator = OrchestratorAgent()
-symptom_processor = SymptomProcessor()
-ml_predictor = MLPredictor()
 
-@router.post("/assess")
+
+def _patient_context_from_request(symptom_input: SymptomInput) -> dict:
+    """Structured context for ML validation only (from this request; no persisted history)."""
+    return {
+        "test_reports": [],
+        "medications": symptom_input.current_medications or [],
+        "allergies": symptom_input.allergies or [],
+        "known_conditions": symptom_input.comorbidities or [],
+        "context_notes": [],
+    }
+
+
+@router.post("/assess", responses={400: {"description": "Bad request"}})
 async def assess_symptoms(symptom_input: SymptomInput):
     """
-    Assess symptoms and return comprehensive triage decision
+    Run the full agent pipeline: symptom understanding → ML → severity → orchestration.
     POST /api/triage/assess
-    
-    Request body:
-    {
-        'symptoms': str,
-        'patient_age': int (optional),
-        'current_medications': [str] (optional),
-        'allergies': [str] (optional),
-        'comorbidities': [str] (optional),
-        'patient_location': str (optional)
-    }
     """
     try:
-        # Process symptoms
-        processed_symptoms = symptom_processor.parse_symptoms(symptom_input.symptoms)
-        
-        # Get ML predictions
-        disease_probs = ml_predictor.predict(processed_symptoms)
-        disease_probs = ml_predictor.rank_by_probability(disease_probs)
-        
-        # Prepare orchestrator input
-        orchestrator_input = {
-            'symptoms': symptom_input.symptoms,
-            'disease_probabilities': disease_probs,
-            'patient_age': symptom_input.patient_age,
-            'current_medications': symptom_input.current_medications or [],
-            'allergies': getattr(symptom_input, 'allergies', []),
-            'comorbidities': getattr(symptom_input, 'comorbidities', []),
-            'patient_location': getattr(symptom_input, 'patient_location', ''),
-            'mobility_status': getattr(symptom_input, 'mobility_status', 'Mobile')
-        }
-        
-        # Get comprehensive triage response from orchestrator
-        triage_response = orchestrator.process(orchestrator_input)
-        
-        return triage_response
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        patient_context = _patient_context_from_request(symptom_input)
 
-@router.get("/history/{patient_id}")
-async def get_triage_history(patient_id: str):
-    """Get triage history for a patient"""
-    try:
-        # Placeholder implementation
-        return {
-            'patient_id': patient_id,
-            'history': []
+        orchestrator_input = {
+            "symptoms": symptom_input.symptoms,
+            "patient_age": symptom_input.patient_age,
+            "current_medications": patient_context["medications"],
+            "allergies": patient_context["allergies"],
+            "comorbidities": symptom_input.comorbidities or [],
+            "patient_location": symptom_input.patient_location or "",
+            "mobility_status": getattr(symptom_input, "mobility_status", "Mobile"),
+            "patient_context": patient_context,
         }
+
+        return orchestrator.process(orchestrator_input)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
