@@ -12,7 +12,8 @@ class BaseAgent(ABC):
         self.name = name
         self.system_prompt = system_prompt
         self.client = None
-        self.model = 'gpt-4'
+        # Keep model configurable; default to a broadly available model.
+        self.model = os.getenv('OPENAI_MODEL', 'gpt-4o-mini')
         self.conversation_history = []
     
     def add_message(self, role: str, content: str):

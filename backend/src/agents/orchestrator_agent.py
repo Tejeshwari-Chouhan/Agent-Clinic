@@ -178,6 +178,7 @@ Provide a patient-friendly summary and clear next steps."""
             'triage_decision': triage_decision,
             'pharmaceutical_recommendations': pharma_recommendations,
             'routing_guidance': routing_guidance,
+            'emergency_routing': routing_guidance.get('emergency_routing', {}),
             'patient_summary': synthesis,
             'next_steps': routing_guidance.get('pre_arrival_instructions', []),
             'warnings': triage_decision.get('safety_warnings', []),
