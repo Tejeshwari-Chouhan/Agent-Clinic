@@ -81,7 +81,7 @@
 
 .hero-subtitle {
   font-size: 1.25rem;
-  color: var(--text-secondary);
+  color: var(--text-paragraph);
   line-height: 1.6;
 }
 
@@ -108,11 +108,15 @@
 }
 
 .feature-card p {
-  color: var(--text-secondary);
+  color: var(--text-paragraph);
   font-size: 0.95rem;
 }
 
 /* Triage Section */
+#triage {
+  scroll-margin-top: 5.5rem;
+}
+
 .triage-section {
   max-width: 800px;
   margin: 0 auto;
@@ -285,7 +289,7 @@ div .spinner {
 
 .agent-description {
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--text-paragraph);
   line-height: 1.4;
   flex: 1;
 }
@@ -299,6 +303,7 @@ div .spinner {
 .recommendation {
   font-size: 1.1rem;
   line-height: 1.6;
+  color: var(--text-paragraph);
 }
 
 .conditions-list h4 {
@@ -376,7 +381,7 @@ div .spinner {
 
 .about-text {
   font-size: 1.1rem;
-  color: var(--text-secondary);
+  color: var(--text-paragraph);
   line-height: 1.6;
   margin-bottom: 2rem;
   max-width: 600px;
@@ -414,7 +419,7 @@ div .spinner {
 }
 
 .stat-card p {
-  color: var(--text-secondary);
+  color: var(--text-paragraph);
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -459,4 +464,89 @@ div .spinner {
   .patient-info-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Patient summary: rendered Markdown */
+.patient-summary-markdown {
+  line-height: 1.65;
+  color: var(--text-paragraph);
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.patient-summary-markdown > *:first-child {
+  margin-top: 0;
+}
+
+.patient-summary-markdown > *:last-child {
+  margin-bottom: 0;
+}
+
+.patient-summary-markdown p {
+  margin: 0.65rem 0;
+}
+
+.patient-summary-markdown h1,
+.patient-summary-markdown h2,
+.patient-summary-markdown h3,
+.patient-summary-markdown h4 {
+  color: var(--text-primary);
+  margin: 1rem 0 0.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.patient-summary-markdown h1 {
+  font-size: 1.2rem;
+}
+
+.patient-summary-markdown h2,
+.patient-summary-markdown h3 {
+  font-size: 1.05rem;
+}
+
+.patient-summary-markdown h4 {
+  font-size: 1rem;
+}
+
+.patient-summary-markdown ul,
+.patient-summary-markdown ol {
+  margin: 0.5rem 0;
+  padding-left: 1.35rem;
+}
+
+.patient-summary-markdown li {
+  margin: 0.35rem 0;
+}
+
+.patient-summary-markdown li > p {
+  margin: 0.25rem 0;
+}
+
+.patient-summary-markdown strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.patient-summary-markdown a {
+  color: var(--accent);
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.patient-summary-markdown a:hover {
+  text-decoration: underline;
+}
+
+.patient-summary-markdown hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 1rem 0;
+}
+
+.patient-summary-markdown blockquote {
+  margin: 0.75rem 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--primary);
+  color: var(--text-secondary);
 }

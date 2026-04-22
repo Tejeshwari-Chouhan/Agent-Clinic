@@ -56,10 +56,19 @@ Always provide:
         comorbidities = input_data.get('comorbidities', [])
         known_conditions = input_data.get('known_conditions', [])
         test_reports = input_data.get('test_reports', [])
+        severity_hint = input_data.get('severity_hint') or {}
+        hint_level = severity_hint.get('severity_level')
+        hint_score = severity_hint.get('severity_score')
         
         # Format disease probabilities for the agent
         prob_text = '\n'.join([f"- {cond}: {prob:.2%}" for cond, prob in disease_probs])
         
+        hint_text = "Not provided"
+        if hint_level:
+            hint_text = f"{hint_level}"
+            if hint_score is not None:
+                hint_text += f" (numeric severity score {hint_score})"
+
         prompt = f"""Analyze the following clinical data and provide a triage decision:
 
 Symptoms: {symptoms}
@@ -67,6 +76,7 @@ Patient Age: {patient_age if patient_age else 'Not provided'}
 Comorbidities: {', '.join(comorbidities) if comorbidities else 'None'}
 Known Conditions (Historical): {', '.join(known_conditions) if known_conditions else 'None'}
 Test Reports (Historical): {', '.join([str(report) for report in test_reports]) if test_reports else 'None'}
+Severity scoring agent hint (respect unless clear evidence contradicts): {hint_text}
 
 Disease Probability Analysis:
 {prob_text}

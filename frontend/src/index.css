@@ -10,8 +10,12 @@
   --accent: #8b5cf6; /* Violet */
   
   --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
+  /* Supporting UI labels, nav — readable on dark without competing with body copy */
+  --text-secondary: #B8C9DC;
+  /* Muted / placeholders / de-emphasized */
+  --text-muted: #8B9CAF;
+  /* Default paragraph / prose on dark surfaces (WCAG-friendly vs --bg-main) */
+  --text-paragraph: #E2E8F0;
   
   --success: #10B981;
   --warning: #F59E0B;
@@ -41,6 +45,10 @@
   --transition-fast: 0.15s ease-in-out;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 * {
@@ -90,6 +98,11 @@ h1, h2, h3, h4, h5, h6 {
 h1 { font-size: 2.5rem; letter-spacing: -0.025em; }
 h2 { font-size: 2rem; letter-spacing: -0.015em; }
 h3 { font-size: 1.5rem; }
+
+p {
+  color: var(--text-paragraph);
+  line-height: 1.6;
+}
 
 /* Gradients */
 .text-gradient {

@@ -40,6 +40,30 @@ class EmergencyRouter:
             places = self._search_places(location, facility_type)
         except Exception:
             places = []
+        facilities = self._places_to_sorted_facilities(location, places)
+        if facilities:
+            return facilities
+        return self._load_fallback_facilities(location)
+
+    def find_hospitals_near_patient(self, location: str) -> List[Dict[str, Any]]:
+        """
+        Nearby hospitals for non-emergency triage (informational).
+        Uses a general Places query; falls back to static list if Maps is unavailable.
+        """
+        if not location or not str(location).strip():
+            raise ValueError("Patient location is required.")
+
+        loc = str(location).strip()
+        try:
+            places = self._search_places_raw(f"hospitals near {loc}")
+        except Exception:
+            places = []
+        facilities = self._places_to_sorted_facilities(loc, places)
+        if facilities:
+            return facilities
+        return self._load_fallback_facilities(loc)
+
+    def _places_to_sorted_facilities(self, location: str, places: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         facilities: List[Dict[str, Any]] = []
 
         for place in places[: self.max_facilities]:
@@ -69,7 +93,7 @@ class EmergencyRouter:
         )
         if facilities:
             return facilities[: self.max_facilities]
-        return self._load_fallback_facilities(location)
+        return []
 
     def get_directions(self, origin: str, destination: str) -> Dict[str, Any]:
         """Get travel time and distance for origin/destination using Distance Matrix."""
@@ -115,10 +139,13 @@ class EmergencyRouter:
             }
 
     def _search_places(self, location: str, facility_type: str) -> List[Dict[str, Any]]:
+        query = f"nearest emergency {facility_type} near {location}"
+        return self._search_places_raw(query)
+
+    def _search_places_raw(self, query: str) -> List[Dict[str, Any]]:
         if not self.api_key:
             return []
 
-        query = f"nearest emergency {facility_type} near {location}"
         response = requests.get(
             self.PLACES_API_URL,
             params={"query": query, "key": self.api_key},

@@ -4,7 +4,6 @@ from typing import List, Optional
 class SymptomInput(BaseModel):
     """Schema for symptom input"""
     symptoms: str
-    patient_id: Optional[str] = None
     patient_age: Optional[int] = None
     current_medications: Optional[List[str]] = None
     allergies: Optional[List[str]] = None
@@ -12,23 +11,6 @@ class SymptomInput(BaseModel):
     patient_location: Optional[str] = None
     mobility_status: Optional[str] = "Mobile"
 
-
-class PatientContextInput(BaseModel):
-    """Schema for storing patient context and reports."""
-
-    patient_id: str
-    test_reports: Optional[List[str]] = None
-    medications: Optional[List[str]] = None
-    allergies: Optional[List[str]] = None
-    known_conditions: Optional[List[str]] = None
-    context_notes: Optional[List[str]] = None
-
-
-class ContextPromptInput(BaseModel):
-    """Schema for prompt-driven context ingestion."""
-
-    patient_id: str
-    prompt: str
 
 class DiseaseProbability(BaseModel):
     """Schema for disease probability"""

@@ -19,6 +19,11 @@ class Settings(BaseSettings):
         'EMERGENCY_FALLBACK_DATA_PATH',
         'src/data/emergency_facilities_fallback.json'
     )
+
+    # ML dataset path relative to backend root (see data/ml/symptom_disease_training.csv)
+    ml_dataset_path: str = os.getenv('ML_DATASET_PATH', 'data/ml/symptom_disease_training.csv')
+    # Pickle cache for DecisionTree model (matches notebooks/disease_ml_pipeline.ipynb)
+    ml_model_cache_path: str = os.getenv('ML_MODEL_CACHE_PATH', 'src/data/disease_dt_model.pkl')
     
     # Database
     database_url: str = os.getenv('DATABASE_URL', '')
