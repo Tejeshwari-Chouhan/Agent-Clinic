@@ -1,0 +1,17 @@
+# Python virtual environments
+.venv/
+venv/
+backend/.venv/
+
+# Python cache/bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment files and local secrets
+.env
+.env.*
+backend/.env
+
+# Local runtime data
+backend/data/
